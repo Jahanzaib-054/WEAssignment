@@ -1,0 +1,59 @@
+﻿@page "/"
+@using LinqWork.Data;
+
+@inject DataDbContext _db
+
+<PageTitle>Index</PageTitle>
+
+
+<EditForm Model="@stu" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="name">Student Name:</label>
+    <InputText id="name" @bind-Value="stu.StudentName" class="form-control" />
+    <br />
+    <label for="major">Major:</label>
+    <InputText id="major" @bind-Value="stu.Major" class="form-control" />
+    <label for="standing">Standing:</label>
+    <InputText id="standing" @bind-Value="stu.Standing" class="form-control" />
+    <br />
+    <input type="submit" name="Submit"/>
+</EditForm>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Student Id</th>
+            <th>Student Name</th>
+            <th>Major</th>
+            <th>Standing</th>
+        </tr>
+        @foreach (var s in students)
+        {
+            <tr>
+                <td>@s.StudentId</td>
+                <td>@s.StudentName</td>
+                <td>@s.Major</td>
+                <td>@s.Standing</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    Student stu = new Student();
+
+    List<Student> students = new List<Student>();
+
+    protected override void OnInitialized()
+    {
+        students = _db.Students.ToList();
+    }
+
+    void HandleSubmit()
+    {
+        _db.Add(stu);
+        _db.SaveChangesAsync();
+    }
+}

@@ -1,0 +1,59 @@
+﻿@page "/faculty"
+@using LinqWork.Data;
+
+@inject DataDbContext _db
+
+<PageTitle>Faculty</PageTitle>
+
+
+<EditForm Model="@fac" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="name">Faculty Name:</label>
+    <InputText id="name" @bind-Value="fac.FacultyName" class="form-control" />
+    <br />
+    <label for="dept">Department Id:</label>
+    <InputNumber id="dept" @bind-Value="fac.DeptId" class="form-control" />
+    <label for="standing">Standing:</label>
+    <InputText id="standing" @bind-Value="fac.Standing" class="form-control" />
+    <br />
+    <input type="submit" name="Submit" />
+</EditForm>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Faculty Id</th>
+            <th>Faculty Name</th>
+            <th>DeptId</th>
+            <th>Standing</th>
+        </tr>
+        @foreach (var f in faculty)
+        {
+            <tr>
+                <td>@f.FacultyId</td>
+                <td>@f.FacultyName</td>
+                <td>@f.DeptId</td>
+                <td>@f.Standing</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    Faculty fac = new Faculty();
+
+    List<Faculty> faculty = new List<Faculty>();
+
+    protected override void OnInitialized()
+    {
+        faculty = _db.Faculty.ToList();
+    }
+
+    void HandleSubmit()
+    {
+        _db.Add(fac);
+        _db.SaveChangesAsync();
+    }
+}

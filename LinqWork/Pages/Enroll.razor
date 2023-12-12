@@ -1,0 +1,55 @@
+﻿@page "/enroll"
+@using LinqWork.Data;
+
+@inject DataDbContext _db
+
+<PageTitle>Enrollment</PageTitle>
+
+
+<EditForm Model="@enl" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="studentid">Student Id:</label>
+    <InputNumber id="studentid" @bind-Value="enl.StudentId" class="form-control" />
+    <br />
+    <label for="classid">Class Id:</label>
+    <InputNumber id="classid" @bind-Value="enl.ClassId" class="form-control" />
+    <br />
+    <input type="submit" name="Submit" />
+</EditForm>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Enrollment Id</th>
+            <th>Student Id</th>
+            <th>Class Id</th>
+        </tr>
+        @foreach (var e in enrollments)
+        {
+            <tr>
+                <td>@e.EnrollmentId</td>
+                <td>@e.StudentId</td>
+                <td>@e.ClassId</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    Enrolled enl = new Enrolled();
+
+    List<Enrolled> enrollments = new List<Enrolled>();
+
+    protected override void OnInitialized()
+    {
+        enrollments = _db.Enrolled.ToList();
+    }
+
+    void HandleSubmit()
+    {
+        _db.Add(enl);
+        _db.SaveChangesAsync();
+    }
+}
