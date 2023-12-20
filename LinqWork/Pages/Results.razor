@@ -3,8 +3,6 @@
 @inject DataDbContext _db
 
 <h3>Results</h3>
-
-
 @if (ClassesWithMore != null && ClassesWithMore.Any())
 {
     <table class="table">
@@ -60,13 +58,13 @@ else
 }
 
 @code {
+    int query;
     List<Class> ClassesWithMore = new List<Class>();
     List<Student> studentsWithNoClasses = new List<Student>();
 
     protected override void OnInitialized()
     {
-        // Call a method to retrieve class information with more than 100 students
-        ClassesWithMore = _db.Classes.Where(c => _db.Enrolled.Count(x => x.ClassId == c.ClassId) > 100).ToList();
+        ClassesWithMore = _db.Classes.Where(c => _db.Enrolled.Count(x => x.ClassId == c.ClassId) > 3).ToList();
         studentsWithNoClasses = _db.Students.Where(s => !_db.Enrolled
                 .Join(_db.Classes, e => e.ClassId, c => c.ClassId, (e, c) => new { e, c })
                 .Join(_db.Faculty, ec => ec.c.FacultyId, f => f.FacultyId, (ec, f) => new { ec, f })
