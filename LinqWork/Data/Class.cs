@@ -11,6 +11,7 @@ namespace LinqWork.Data
         public int FacultyId { get; set; }
 
         // Navigation property
-        public Faculty? Faculty { get; set; }
+        public Faculty Faculty { get; set; }
+        public List<Enrolled> Enrolled { get; set; }
     }
 }

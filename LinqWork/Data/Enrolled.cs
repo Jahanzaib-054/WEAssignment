@@ -10,7 +10,7 @@ namespace LinqWork.Data
         public int ClassId { get; set; }
 
         // Navigation properties
-        public Student? Student { get; set; }
-        public Class? Class { get; set; }
+        public Student Student { get; set; }
+        public Class Class { get; set; }
     }
 }

@@ -9,5 +9,8 @@ namespace LinqWork.Data
         public string? StudentName { get; set; }
         public string? Major { get; set; }
         public string? Standing { get; set; }
+
+        // Navigation properties
+        public List<Enrolled> Enrolled { get; set; }
     }
 }

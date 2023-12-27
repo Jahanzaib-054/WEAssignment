@@ -1,5 +1,6 @@
 ﻿@page "/results"
 @using LinqWork.Data;
+@using Microsoft.EntityFrameworkCore
 @inject DataDbContext _db
 
 <h3>Results</h3>
@@ -58,17 +59,15 @@ else
 }
 
 @code {
-    int query;
     List<Class> ClassesWithMore = new List<Class>();
     List<Student> studentsWithNoClasses = new List<Student>();
-
     protected override void OnInitialized()
     {
         ClassesWithMore = _db.Classes.Where(c => _db.Enrolled.Count(x => x.ClassId == c.ClassId) > 3).ToList();
-        studentsWithNoClasses = _db.Students.Where(s => !_db.Enrolled
-                .Join(_db.Classes, e => e.ClassId, c => c.ClassId, (e, c) => new { e, c })
-                .Join(_db.Faculty, ec => ec.c.FacultyId, f => f.FacultyId, (ec, f) => new { ec, f })
-                .Any(joined => joined.f.DeptId == 22 && joined.ec.e.StudentId == s.StudentId)).ToList();
+        studentsWithNoClasses = _db.Students
+            .Include(s => s.Enrolled)
+            .ThenInclude(e => e.Class)
+            .ThenInclude(c => c.Faculty)
+            .Where(s => !s.Enrolled.Any(e => e.Class.Faculty.DeptId == 22)).ToList();
     }
-
 }

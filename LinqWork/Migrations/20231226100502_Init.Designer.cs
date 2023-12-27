@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinqWork.Migrations
 {
     [DbContext(typeof(DataDbContext))]
-    [Migration("20231220054015_init")]
-    partial class init
+    [Migration("20231226100502_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,7 +118,7 @@ namespace LinqWork.Migrations
             modelBuilder.Entity("LinqWork.Data.Class", b =>
                 {
                     b.HasOne("LinqWork.Data.Faculty", "Faculty")
-                        .WithMany()
+                        .WithMany("Classes")
                         .HasForeignKey("FacultyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -129,13 +129,13 @@ namespace LinqWork.Migrations
             modelBuilder.Entity("LinqWork.Data.Enrolled", b =>
                 {
                     b.HasOne("LinqWork.Data.Class", "Class")
-                        .WithMany()
+                        .WithMany("Enrolled")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LinqWork.Data.Student", "Student")
-                        .WithMany()
+                        .WithMany("Enrolled")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -143,6 +143,21 @@ namespace LinqWork.Migrations
                     b.Navigation("Class");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("LinqWork.Data.Class", b =>
+                {
+                    b.Navigation("Enrolled");
+                });
+
+            modelBuilder.Entity("LinqWork.Data.Faculty", b =>
+                {
+                    b.Navigation("Classes");
+                });
+
+            modelBuilder.Entity("LinqWork.Data.Student", b =>
+                {
+                    b.Navigation("Enrolled");
                 });
 #pragma warning restore 612, 618
         }
