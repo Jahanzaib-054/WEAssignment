@@ -58,9 +58,37 @@ else
     <p>No students found who take no classes with teachers in department 22.</p>
 }
 
+<h3>Students Enrolled in More Than Two Classes</h3>
+
+@if (studentsWithMoreClasses != null && studentsWithMoreClasses.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Number of Classes Enrolled</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in studentsWithMoreClasses)
+            {
+                <tr>
+                    <td>@student.StudentName</td>
+                    <td>@student.NumberOfClassesEnrolled</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No students found who are enrolled in more than two classes.</p>
+}
+
 @code {
     List<Class> ClassesWithMore = new List<Class>();
     List<Student> studentsWithNoClasses = new List<Student>();
+    List<EnrolledStudentInfo> studentsWithMoreClasses = new List<EnrolledStudentInfo>();
     protected override void OnInitialized()
     {
         ClassesWithMore = _db.Classes.Where(c => _db.Enrolled.Count(x => x.ClassId == c.ClassId) > 3).ToList();
@@ -69,5 +97,18 @@ else
             .ThenInclude(e => e.Class)
             .ThenInclude(c => c.Faculty)
             .Where(s => !s.Enrolled.Any(e => e.Class.Faculty.DeptId == 22)).ToList();
+        studentsWithMoreClasses = _db.Students
+            .Include(s => s.Enrolled)
+            .Where(s => s.Enrolled.Count > 2)
+            .Select(s => new EnrolledStudentInfo
+            {
+                StudentName = s.StudentName,
+                NumberOfClasses = s.Enrolled.Count
+            }).ToList();
+    }
+    public class EnrolledStudentInfo
+    {
+        public string? StudentName { get; set; }
+        public int NumberOfClasses { get; set; }
     }
 }
